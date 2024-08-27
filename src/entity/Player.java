@@ -2,6 +2,7 @@ package entity;
 
 //import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -24,6 +25,8 @@ public class Player extends Entity {
 	
 		screenX = gamePanel.screenWidth / 2 - (gamePanel.tileSize / 2);
 		screenY = gamePanel.screenHeight / 2 - (gamePanel.tileSize / 2);
+		
+		solidArea = new Rectangle(8, 16, 32, 32);
 		
 		setDefaultPositions();
 		getPlayerImage();
@@ -54,33 +57,47 @@ public class Player extends Entity {
 	}
 	
 	public void update() {
-		if (keyHandler.upPressed == true) {
-			direction = "up";
-			worldY -= speed;
-		} 
-		else if (keyHandler.downPressed == true) {
-			direction = "down";
-			worldY += speed;
-		}
-		else if (keyHandler.leftPressed == true) {
-			direction = "left";
-			worldX -= speed;
-		}
-		else if (keyHandler.rightPressed == true) {
-			direction = "right";
-			worldX += speed;
-		}
 		
-		spriteCounter++;
-		
-		if (spriteCounter > 12) {
-			if (spriteNum == 1) {
-				spriteNum = 2;
+		if (keyHandler.upPressed == true || keyHandler.downPressed == true || keyHandler.leftPressed == true || keyHandler.rightPressed == true) {
+			
+			if (keyHandler.upPressed == true) {
+				direction = "up";
 			} 
-			else if (spriteNum == 2) {
-				spriteNum = 1;
+			else if (keyHandler.downPressed == true) {
+				direction = "down";
 			}
-			spriteCounter = 0;
+			else if (keyHandler.leftPressed == true) {
+				direction = "left";
+			}
+			else if (keyHandler.rightPressed == true) {
+				direction = "right";
+			}
+			
+			collisionOn = false;
+			gamePanel.collisionManager.checkTile(this);
+			
+			if (collisionOn == false) {
+				
+				switch (direction) {
+				case "up": worldY -= speed; break;
+				case "down": worldY += speed; break;
+				case "left": worldX -= speed; break;	
+				case "right": worldX += speed; break;
+				}
+			
+			}
+			
+			spriteCounter++;
+			
+			if (spriteCounter > 12) {
+				if (spriteNum == 1) {
+					spriteNum = 2;
+				} 
+				else if (spriteNum == 2) {
+					spriteNum = 1;
+				}
+				spriteCounter = 0;
+			}
 		}
 	}
 	
